@@ -112,22 +112,22 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """ Overrides the emptyline method of CMD """
         pass
+    
+    @staticmethod
+    def _parse_key_value(arr):
+        """
+        Parses key value arr and turns to a dic
 
-    def do_create(self, args):
-        """ Create an object of any class"""
+        Args:
+            arr (array): Array of arries of key value pairs
 
-        if not args:
-            print("** class name missing **")
-            return
+        Returns:
+            dict: A dict of all of the key value pairs
+        """
 
-        args_arr = args.split(" ")
-        cls = args_arr[0]
-        values = args_arr[1:]
-
-        val_arr = list(map(lambda e: e.split("="), values))
         new_dic = {}
 
-        for i in val_arr:
+        for i in arr:
             k, v = i[0], i[1]
             if v[0] == '"':
                 v = v.strip('"').replace("_", " ")
@@ -141,6 +141,22 @@ class HBNBCommand(cmd.Cmd):
                         continue
             new_dic[k] = v
 
+        return new_dic
+
+    def do_create(self, args):
+        """ Create an object of any class"""
+
+        if not args:
+            print("** class name missing **")
+            return
+
+        args_arr = args.split(" ")
+        cls = args_arr[0]
+        values = args_arr[1:]
+
+        val_arr = list(map(lambda e: e.split("="), values))
+        new_dic = self._parse_key_value(val_arr)
+
         if cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
@@ -152,7 +168,7 @@ class HBNBCommand(cmd.Cmd):
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
+        print("[Usage]: create <Class name> <param 1> <param 2>\n")
 
     def do_show(self, args):
         """ Method to show an individual object """
