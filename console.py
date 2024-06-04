@@ -112,7 +112,7 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         """ Overrides the emptyline method of CMD """
         pass
-    
+
     @staticmethod
     def _parse_key_value(arr):
         """
