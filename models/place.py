@@ -6,19 +6,13 @@ from models.base_model import BaseModel, Base
 from sqlalchemy.orm import relationship
 
 if models.storage_type == 'db':
-    place_amenity = Table('place_amenity', Base.metadata,
-                          Column('place_id', String(60),
-                                 ForeignKey('places.id'),
-                                 nullable=False,
-                                 onupdate='CASCADE',
-                                 ondelete='CASCADE',
-                                 primary_key=True),
-                          Column('amenity_id', String(60),
-                                 ForeignKey('amenities.id'),
-                                 nullable=False,
-                                 onupdate='CASCADE',
-                                 ondelete='CASCADE',
-                                 primary_key=True))
+    place_amenity = Table("place_amenity", Base.metadata,
+                          Column("place_id", String(60),
+                                 ForeignKey("places.id"),
+                                 primary_key=True, nullable=False),
+                          Column("amenity_id", String(60),
+                                 ForeignKey("amenities.id"),
+                                 primary_key=True, nullable=False))
 
 
 class Place(BaseModel, Base):
@@ -35,7 +29,7 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
-        reviews = relationship("Review", backref="place")
+        reviews = relationship("Review", backref="place", cascade="delete")
         amenities = relationship("Amenity", secondary="place_amenity",
                                  viewonly=False)
     else:
@@ -77,3 +71,8 @@ class Place(BaseModel, Base):
                 if amenity.place_id == self.id:
                     amenity_list.append(amenity)
             return amenity_list
+
+        @amenities.setter
+        def amenities(self, value):
+            if type(value) == Amenity:
+                self.amenity_ids.append(value.id)
