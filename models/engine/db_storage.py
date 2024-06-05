@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Module for the DBStorage Class"""
 
+import sqlalchemy
 from sqlalchemy import (create_engine)
 from os import getenv
 from models.amenity import Amenity
@@ -10,6 +11,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 classes = {
@@ -27,13 +29,11 @@ class DBStorage:
 
     def __init__(self):
         """Instantiate a DBStorage object"""
-
         HBNB_MYSQL_USER = getenv('HBNB_MYSQL_USER')
         HBNB_MYSQL_PWD = getenv('HBNB_MYSQL_PWD')
         HBNB_MYSQL_HOST = getenv('HBNB_MYSQL_HOST')
         HBNB_MYSQL_DB = getenv('HBNB_MYSQL_DB')
         HBNB_ENV = getenv('HBNB_ENV')
-
         self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.
                                       format(HBNB_MYSQL_USER,
                                              HBNB_MYSQL_PWD,
@@ -56,14 +56,22 @@ class DBStorage:
 
         new_dict = {}
         res = None
+        cls_name = cls.__name__
 
-        for el in classes:
-            if cls is None or classes[el]:
-                res = self.__session.query(classes[el]).all()
-                for obj in res:
-                    k = obj.__class__.name + '.' + obj.id
-                    new_dict[k] = obj
+        if cls is None:
+            res = self.__session.query().all()
+            for obj in res:
+                k = obj.__class__.name + '.' + obj.id
+                new_dict[k] = obj
 
+        else:
+            for el in classes:
+                if classes[cls_name] and cls_name == el:
+                    res = self.__session.query(classes[el]).all()
+                    for obj in res:
+                        k = obj.__class__.name + '.' + obj.id
+                        new_dict[k] = obj
+        
         return new_dict
 
     def new(self, obj):
