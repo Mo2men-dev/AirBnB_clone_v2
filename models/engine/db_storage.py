@@ -71,7 +71,7 @@ class DBStorage:
                     for obj in res:
                         k = obj.__class__.__name__ + '.' + obj.id
                         new_dict[k] = obj
-        
+
         return new_dict
 
     def new(self, obj):
