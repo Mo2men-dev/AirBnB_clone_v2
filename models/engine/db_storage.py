@@ -61,7 +61,7 @@ class DBStorage:
         if cls is None:
             res = self.__session.query().all()
             for obj in res:
-                k = obj.__class__.name + '.' + obj.id
+                k = obj.__class__.__name__ + '.' + obj.id
                 new_dict[k] = obj
 
         else:
@@ -69,7 +69,7 @@ class DBStorage:
                 if classes[cls_name] and cls_name == el:
                     res = self.__session.query(classes[el]).all()
                     for obj in res:
-                        k = obj.__class__.name + '.' + obj.id
+                        k = obj.__class__.__name__ + '.' + obj.id
                         new_dict[k] = obj
         
         return new_dict
