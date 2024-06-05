@@ -3,6 +3,7 @@
 import models
 from sqlalchemy import Column, String, Integer, Float, ForeignKey
 from models.base_model import BaseModel, Base
+from sqlalchemy.orm import relationship
 
 
 class Place(BaseModel, Base):
@@ -38,7 +39,7 @@ class Place(BaseModel, Base):
         """Inits the place class"""
         super().__init__(*args, **kwargs)
 
-    if models.storage_t != 'db':
+    if models.storage_type != 'db':
         @property
         def reviews(self):
             """getter attribute returns the list of Review instances"""
